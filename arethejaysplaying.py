@@ -17,12 +17,37 @@ OAUTH_TOKEN_SECRET = os.getenv('OAUTH_TOKEN_SECRET')
 print "the APP KEY is %s" % APP_KEY
 
 teams = {
+		"anamlb" : "Angels",
+		"arimlb" : "Diamondbacks",
 		"atlmlb" : "Braves",
+		"balmlb" : "Orioles",
 		"bosmlb" : "Red Sox",
 		"chnmlb" : "Cubs",
+		"chamlb" : "White Sox",
 		"clemlb" : "Indians",
+		"colmlb" : "Rockies",
+		"detmlb" : "Tigers",
+		"houmlb" : "Houston",
+		"kcamlb" : "Royals",
+		"lanmlb" : "Dodgers",
+		"miamlb" : "Marlins",
+		"milmlb" : "Brewers",
+		"minmlb" : "Twins",
+		"nyamlb" : "Yankees",
+		"nymmlb" : "Mets",
+		"oakmlb" : "A's",
+		"phimlb" : "Phillies",
+		"pitmlb" : "Pirates",
+		"sdnmlb" : "Padres",
+		"seamlb" : "Mariners",
+		"sfnmlb" : "Giants",
+		"slnmlb" : "Cardinals",
+		"tbamlb" : "Rays",
+		"texmlb" : "Rangers",
 		"tormlb" : "Jays",
+		"wasmlb" : "Nationals",
 }
+
 mlbbaseurl = "http://gd2.mlb.com/components/game/mlb/"
 link_count=0
 # reference - the MLB URL:
@@ -49,6 +74,7 @@ def get_game_values(jaysdir):
 	tree = ElementTree.ElementTree(ElementTree.fromstring(data))
 	#print tree
 	root = tree.getroot()
+	
 	for name, value in root.attrib.items():
 		if name == "start_time":
 			gametime = value
@@ -72,6 +98,7 @@ def get_game_values(jaysdir):
 			gametime = value
 		if name == "time_zone":
 			timezone = value
+	return gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname
 
 # build the url and pull the page down into buetiful soup
 year,month,month_word,day = get_date()
@@ -86,12 +113,12 @@ soup = BeautifulSoup(data)
 for link in soup.find_all('a'):
 	if "gid" in str(link.get('href')) and "tormlb" in str(link.get('href')):
 		message = 'Yes! '
-		link_count += link_count
+		link_count = link_count + 1
 		jaysuri = link.get('href')
 		jaysuri = jaysuri[:-1]
 		jaysdir = url + "/" + jaysuri
-		get_opponent(jaysuri)
-		get_game_values(jaysdir)
+		opponent_name = get_opponent(jaysuri)
+		(gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname) = get_game_values(jaysdir)
 		message += "against the %s at %s %s at %s \n%s %s against %s %s\n" % (opponent_name, gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname)
 
 	if link_count == 0:
