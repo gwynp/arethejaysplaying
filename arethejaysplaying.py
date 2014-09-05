@@ -61,7 +61,12 @@ def get_date():
 	return (year,month,month_word,day)
 
 def get_opponent(jaysuri):
+	# pull the opponent name from the URI.
+	# it can be in one of two places in the string
+	# so try both
 	opponent = str(jaysuri[15:-9])
+	if opponent == "tormlb":
+		opponent = str(jaysuri[22:-2])
 	opponent_name = teams[opponent]
 	return opponent_name
 
@@ -117,6 +122,7 @@ for link in soup.find_all('a'):
 		jaysuri = link.get('href')
 		jaysuri = jaysuri[:-1]
 		jaysdir = url + "/" + jaysuri
+		print jaysdir
 		opponent_name = get_opponent(jaysuri)
 		(gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname) = get_game_values(jaysdir)
 		message += "against the %s at %s %s at %s \n%s %s against %s %s\n" % (opponent_name, gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname)
@@ -124,6 +130,6 @@ for link in soup.find_all('a'):
 	if link_count == 0:
 		message = "Not Today"
 
-twitter = Twython(APP_KEY, APP_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-twitter.update_status(status=message)
+#twitter = Twython(APP_KEY, APP_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+#twitter.update_status(status=message)
 print message
