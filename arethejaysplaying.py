@@ -9,12 +9,15 @@ import urllib2
 from twython import Twython
 import os
 
-APP_KEY = os.environ.get("APP_KEY")
-APP_SECRET = os.getenv('APP_SECRET')
+API_KEY = os.environ.get("API_KEY")
+API_KEY_SECRET = os.getenv('API_SECRET')
 OAUTH_TOKEN = os.getenv('OAUTH_TOKEN')
 OAUTH_TOKEN_SECRET = os.getenv('OAUTH_TOKEN_SECRET')
 
-print "the APP KEY is %s" % APP_KEY
+print "the API KEY is %s" % API_KEY
+print "the API SECRET is %s" % API_KEY_SECRET
+print "the OATH_TOKEN is %s" % OAUTH_TOKEN
+print "the OAUTH_TOKEN_SECRET is %s" % OAUTH_TOKEN_SECRET
 
 teams = {
 		"anamlb" : "Angels",
@@ -51,7 +54,7 @@ teams = {
 mlbbaseurl = "http://gd2.mlb.com/components/game/mlb/"
 link_count=0
 # reference - the MLB URL:
-# http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_26/gid_2014_08_26_minmlb_kcamlb_1/inning/inning_all.xml 
+# http://gd2.mlb.com/components/game/mlb/year_2014/month_08/day_26/gid_2014_08_26_minmlb_kcamlb_1/inning/inning_all.xml
 
 def get_date():
 	year = datetime.date.today().strftime("%Y")
@@ -79,7 +82,7 @@ def get_game_values(jaysdir):
 	tree = ElementTree.ElementTree(ElementTree.fromstring(data))
 	#print tree
 	root = tree.getroot()
-	
+
 	for name, value in root.attrib.items():
 		if name == "start_time":
 			gametime = value
@@ -92,7 +95,7 @@ def get_game_values(jaysdir):
 	for node in tree.findall('./probables/home'):
 		homesurname = node.find('lastName').text
 		homefirstname = node.find('useName').text
-		
+
 	for node in tree.findall('./probables/away'):
 		awaysurname = node.find('lastName').text
 		awayfirstname = node.find('useName').text
@@ -129,6 +132,6 @@ for link in soup.find_all('a'):
 	if link_count == 0:
 		message = "Not Today"
 
-twitter = Twython(APP_KEY, APP_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+twitter = Twython(API_KEY, API_KEY_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 twitter.update_status(status=message)
 print message
