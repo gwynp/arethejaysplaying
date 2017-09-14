@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+# -*- coding: utf-8 -*-
+
 from bs4 import BeautifulSoup
 from xml.etree import ElementTree
 import requests
@@ -13,10 +15,11 @@ API_KEY = os.environ.get("API_KEY")
 API_KEY_SECRET = os.getenv('API_SECRET')
 OAUTH_TOKEN = os.getenv('OAUTH_TOKEN')
 OAUTH_TOKEN_SECRET = os.getenv('OAUTH_TOKEN_SECRET')
+SNS_TOPIC = os.environ.get("SNS_TOPIC")
 
 print "the API KEY is %s" % API_KEY
 print "the API SECRET is %s" % API_KEY_SECRET
-print "the OATH_TOKEN is %s" % OAUTH_TOKEN
+print "the OAUTH_TOKEN is %s" % OAUTH_TOKEN
 print "the OAUTH_TOKEN_SECRET is %s" % OAUTH_TOKEN_SECRET
 
 teams = {
@@ -133,5 +136,9 @@ for link in soup.find_all('a'):
 		message = "Not Today"
 
 twitter = Twython(API_KEY, API_KEY_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+twitter.verify_credentials()
 twitter.update_status(status=message)
+sns = boto3.resource('sns')
+topic = sns.Topic(SNS_TOPIC)
+topic.publish(Message=message)
 print message
