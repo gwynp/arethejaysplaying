@@ -75,6 +75,7 @@ def get_opponent(jaysuri):
 
 def get_game_values(jaysdir):
 	gamecenter = jaysdir + '/gamecenter.xml'
+	print gamecenter
 	file = urllib2.urlopen(gamecenter)
 	data = file.read()
 	file.close()
@@ -132,6 +133,6 @@ for link in soup.find_all('a'):
 	if link_count == 0:
 		message = "Not Today"
 
-twitter = Twython(API_KEY, API_KEY_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
-twitter.update_status(status=message)
-print message
+#twitter = Twython(API_KEY, API_KEY_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+#twitter.update_status(status=message)
+#print message
