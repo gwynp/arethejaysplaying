@@ -67,15 +67,16 @@ def get_opponent(jaysuri):
 	# pull the opponent name from the URI.
 	# it can be in one of two places in the string
 	# so try both
-	opponent = str(jaysuri[15:-9])
+	print "processing get_openent"
+	opponent = str(jaysuri[22:-9])
 	if opponent == "tormlb":
-		opponent = str(jaysuri[22:-2])
+		opponent = str(jaysuri[29:-2])
 	opponent_name = teams[opponent]
+	print "opponent is  " + opponent
 	return opponent_name
 
 def get_game_values(jaysdir):
 	gamecenter = jaysdir + '/gamecenter.xml'
-	print gamecenter
 	file = urllib2.urlopen(gamecenter)
 	data = file.read()
 	file.close()
@@ -109,12 +110,19 @@ def get_game_values(jaysdir):
 			timezone = value
 	return gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname
 
+def send_tweet(message):
+	print "In send tweet with message"
+	print message
+	twitter = Twython(API_KEY, API_KEY_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
+	twitter.update_status(status=message)
+
+
 # build the url and pull the page down into buetiful soup
 year,month,month_word,day = get_date()
 url = mlbbaseurl + "year_" + year + "/month_" + month + "/day_" + day
 r  = requests.get(url)
 data = r.text
-soup = BeautifulSoup(data)
+soup = BeautifulSoup(data, "html.parser")
 
 # This pulls all the urls from the gameday index page and finds the one containing the Jays.
 # there me be more than one game so build the string by appending game details
@@ -125,13 +133,16 @@ for link in soup.find_all('a'):
 		link_count = link_count + 1
 		jaysuri = link.get('href')
 		jaysuri = jaysuri[:-1]
-		jaysdir = url + "/" + jaysuri
+		print "running get_opponent"
 		opponent_name = get_opponent(jaysuri)
+		jaysuri = jaysuri[7:]
+		jaysdir = url + "/" + jaysuri
 		(gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname) = get_game_values(jaysdir)
 		message += "against the %s at %s %s at %s \n%s %s against %s %s\n" % (opponent_name, gametime, timezone, venue, homefirstname, homesurname, awayfirstname, awaysurname)
-
-	if link_count == 0:
-		message = "Not Today"
+		send_tweet(message)
+if link_count == 0:
+	message = "Not Today"
+	send_tweet(message)
 
 #twitter = Twython(API_KEY, API_KEY_SECRET,OAUTH_TOKEN, OAUTH_TOKEN_SECRET)
 #twitter.update_status(status=message)

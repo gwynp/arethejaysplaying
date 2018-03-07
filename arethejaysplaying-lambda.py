@@ -116,7 +116,7 @@ year,month,month_word,day = get_date()
 url = mlbbaseurl + "year_" + year + "/month_" + month + "/day_" + day
 r  = requests.get(url)
 data = r.text
-soup = BeautifulSoup(data)
+soup = BeautifulSoup(data,"html.parser")
 
 # This pulls all the urls from the gameday index page and finds the one containing the Jays.
 # there me be more than one game so build the string by appending game details
